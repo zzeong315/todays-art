@@ -1,25 +1,32 @@
-# --- 루트 디렉토리 ---
-# 빌드 결과물
-/dist/
-/node_modules/
-build/
+# === Common ===
 
-# 로그
-logs/
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
 *.log
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# 운영체제 파일
-.DS_Store
+# Runtime
+pids
+*.pid
+*.seed
+*.pid.lock
 
-# 테스트 결과
-coverage/
-.nyc_output/
+# dotenv
+.env
+.env.*.local
+.env.local
 
-# IDE 설정
+# Diagnostic reports
+report.*.json
+
+# Editor settings
 .idea/
 .vscode/
 *.suo
@@ -28,28 +35,33 @@ coverage/
 *.sln
 *.sw?
 
-# 환경 변수 파일
-.env
-.env.*.local
-.env.local
+# Test coverage
+coverage/
+.nyc_output/
 
-# 일시적 파일
-.temp/
-.tmp/
-*.pid
-*.seed
+# === Node Modules ===
+**/node_modules/
 
-# 리포트
-report.*.json
+# === Build Output ===
+**/dist/
+**/build/
 
-# --- frontend ---
-frontend/node_modules/
-frontend/dist/
-frontend/dist-ssr/
-frontend/*.local
-frontend/.env
+# === TypeScript ===
+*.tsbuildinfo
 
-# --- backend ---
-backend/node_modules/
-backend/dist/
-backend/.env
+# === Frontend (Vite) ===
+**/dist-ssr/
+**/.vite/
+**/.cache/
+**/public/build/  # if you store built assets here
+
+# === Backend (NestJS) ===
+# (already covered with dist/ above)
+# prisma client generation
+**/prisma/migrations/
+**/prisma/*.db
+
+# === Optional: lock files ===
+# 하나만 쓰는 게 좋음 (npm, yarn, pnpm 중)
+# yarn.lock
+# pnpm-lock.yaml
