@@ -1,0 +1,55 @@
+# --- 루트 디렉토리 ---
+# 빌드 결과물
+/dist/
+/node_modules/
+build/
+
+# 로그
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 운영체제 파일
+.DS_Store
+
+# 테스트 결과
+coverage/
+.nyc_output/
+
+# IDE 설정
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 환경 변수 파일
+.env
+.env.*.local
+.env.local
+
+# 일시적 파일
+.temp/
+.tmp/
+*.pid
+*.seed
+
+# 리포트
+report.*.json
+
+# --- frontend ---
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/.env
+
+# --- backend ---
+backend/node_modules/
+backend/dist/
+backend/.env
