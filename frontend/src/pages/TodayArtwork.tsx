@@ -18,6 +18,10 @@ const TodayArtwork = () => {
             <div>artworkId: {data?.artworkId}</div>
             <div>title: {data?.title}</div>
             <div>artwork: {data?.artist}</div>
+            <div>dateDisplay: {data?.dateDisplay}</div>
+            <div>description: {data?.description}</div>
+            <div>medium: {data?.medium}</div>
+            <div>origin: {data?.origin}</div>
             <div>date: {data?.date}</div>
             <div>createdAt: {data?.createdAt}</div>
             <button className={'bg-blue-400 p-3'} onClick={() => navigate('/artwork-note')}>

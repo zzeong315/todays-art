@@ -6,4 +6,8 @@ export interface TodaysArtworkTypes {
   id: number;
   imageUrl: string;
   title: string;
+  dateDisplay: string;
+  description: string;
+  medium: string;
+  origin: string;
 }
