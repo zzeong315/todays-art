@@ -8,6 +8,8 @@ const ArtworkNote = () => {
   const { data: todayNote, isLoading: todayNoteLoading } = useGetUserTodayNoteQuery();
   const { mutate } = useNoteMutation();
 
+  console.log('todayNote', todayNote);
+
   const {
     register,
     handleSubmit,

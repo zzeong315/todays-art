@@ -10,7 +10,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      isLoggedIn: false,
+      isLoggedIn: !!localStorage.getItem('accessToken'),
       setIsLoggedIn: (value) => set({ isLoggedIn: value }),
       logout: () => set({ isLoggedIn: false }),
     }),
