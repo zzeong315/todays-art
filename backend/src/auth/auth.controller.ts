@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -35,6 +36,12 @@ interface RefreshRequest extends Request {
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('check-email')
+  async checkEmail(@Query('email') email: string) {
+    const isTaken = await this.authService.isEmailTaken(email);
+    return { isTaken }; // true면 중복된 이메일
+  }
 
   @Post('signup')
   signup(@Body() dto: SignupDto) {

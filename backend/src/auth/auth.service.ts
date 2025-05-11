@@ -18,6 +18,13 @@ export class AuthService {
     private readonly config: ConfigService,
   ) {}
 
+  async isEmailTaken(email: string): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+    return !!user;
+  }
+
   async signup(dto: SignupDto) {
     const { nickname, email, password } = dto;
 
