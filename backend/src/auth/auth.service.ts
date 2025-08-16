@@ -91,31 +91,47 @@ export class AuthService {
     });
   }
 
-  // refresh token 재발급
+  // refresh token 재발급 (토큰 회전 적용)
   async refreshTokens(userId: number, refreshToken: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user || !user.hashedRefreshToken) throw new UnauthorizedException();
+    // Transaction을 사용해서 race condition 방지
+    return await this.prisma.$transaction(async (prisma) => {
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user || !user.hashedRefreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
 
-    const isValid = await bcrypt.compare(refreshToken, user.hashedRefreshToken);
-    if (!isValid) throw new UnauthorizedException();
+      // 1. 현재 refresh token 검증
+      const isValid = await bcrypt.compare(refreshToken, user.hashedRefreshToken);
+      if (!isValid) {
+        // 잘못된 토큰이면 즉시 모든 토큰 무효화 (보안 강화)
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { hashedRefreshToken: null },
+        });
+        throw new UnauthorizedException('Invalid refresh token');
+      }
 
-    const payload = { sub: user.id, email: user.email };
+      const payload = { sub: user.id, email: user.email };
 
-    const newAccessToken = await this.jwt.signAsync(payload, {
-      secret: this.config.get('JWT_ACCESS_SECRET'),
-      expiresIn: '15m',
+      // 2. 새로운 토큰들 생성
+      const newAccessToken = await this.jwt.signAsync(payload, {
+        secret: this.config.get('JWT_ACCESS_SECRET'),
+        expiresIn: '15m',
+      });
+
+      const newRefreshToken = await this.jwt.signAsync(payload, {
+        secret: this.config.get('JWT_REFRESH_SECRET'),
+        expiresIn: '7d',
+      });
+
+      // 3. 기존 토큰 무효화와 새 토큰 저장을 동시에 (원자적 연산)
+      const hashedNewRefreshToken = await bcrypt.hash(newRefreshToken, 10);
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { hashedRefreshToken: hashedNewRefreshToken },
+      });
+
+      return { accessToken: newAccessToken, refreshToken: newRefreshToken };
     });
-
-    const newRefreshToken = await this.jwt.signAsync(payload, {
-      secret: this.config.get('JWT_REFRESH_SECRET'),
-      expiresIn: '7d',
-    });
-
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: { hashedRefreshToken: await bcrypt.hash(newRefreshToken, 10) },
-    });
-
-    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 }

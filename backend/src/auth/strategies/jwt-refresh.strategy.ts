@@ -25,7 +25,12 @@ export class JwtRefreshStrategy extends PassportStrategy(
     // @ts-expect-error
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req: RequestWithCookies) => req?.cookies?.refreshToken ?? null,
+        (req: RequestWithCookies) => {
+          console.log('🔍 JWT Extractor - All cookies:', req?.cookies);
+          const token = req?.cookies?.refreshToken ?? null;
+          console.log('🔍 JWT Extractor - Refresh token:', token ? `Found (${token.length} chars)` : 'Not found');
+          return token;
+        },
       ]),
       secretOrKey: config.get<string>('JWT_REFRESH_SECRET'),
       passReqToCallback: true,
@@ -36,11 +41,16 @@ export class JwtRefreshStrategy extends PassportStrategy(
     req: RequestWithCookies,
     payload: JwtPayload,
   ): JwtPayload & { refreshToken: string } {
+    console.log('🔍 Refresh Strategy - cookies:', req.cookies);
+    console.log('🔍 Refresh Strategy - payload:', payload);
+    
     const refreshToken = req.cookies?.refreshToken;
     if (!refreshToken) {
+      console.log('❌ No refresh token found in cookies');
       throw new UnauthorizedException('No refresh token found');
     }
 
+    console.log('✅ Refresh token found, length:', refreshToken.length);
     return { ...payload, refreshToken };
   }
 }

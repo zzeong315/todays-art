@@ -58,6 +58,10 @@ export class AuthController {
       await this.authService.login(dto);
 
     // Refresh Token을 HTTP-Only 쿠키로 설정
+    console.log(
+      '🍪 Setting refresh token cookie, token length:',
+      refreshToken.length,
+    );
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: false, // HTTPS 환경에서만 사용할 것
@@ -65,6 +69,7 @@ export class AuthController {
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
     });
+    console.log('🍪 Cookie set successfully');
 
     return { accessToken, user };
   }
@@ -79,7 +84,12 @@ export class AuthController {
     await this.authService.logout(user.sub);
 
     // 쿠키 삭제
-    res.clearCookie('refreshToken', { path: '/auth/refresh' });
+    res.clearCookie('refreshToken', {
+      path: '/',
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+    });
 
     return { message: 'Logged out successfully' };
   }
@@ -90,6 +100,9 @@ export class AuthController {
     @Req() req: RefreshRequest,
     @Res({ passthrough: true }) res: Response,
   ) {
+    console.log('🔄 Refresh endpoint called');
+    console.log('🔍 Request cookies:', req.cookies);
+
     const userId = req.user.sub;
     const refreshToken = req.cookies.refreshToken;
 
@@ -104,6 +117,7 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
+    console.log('✅ Refresh successful, new tokens generated');
     return { accessToken };
   }
 }
