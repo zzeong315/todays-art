@@ -65,7 +65,9 @@ privateApi.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await privateApi.get('/auth/refresh'); // refresh token은 쿠키에서 전송됨
+        const response = await axios.get(`${apiUrl}/auth/refresh`, {
+          withCredentials: true,
+        }); // refresh token은 쿠키에서 전송됨
         const newAccessToken = response.data.accessToken;
 
         localStorage.setItem('accessToken', newAccessToken);
