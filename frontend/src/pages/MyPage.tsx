@@ -1,10 +1,12 @@
 import { useGetUserAllNotesQuery } from '../queries/useNoteQuery.ts';
 import { useEffect, useState } from 'react';
+import ChangePasswordModal from '../components/modals/ChangePasswordModal.tsx';
 
 const MyPage = () => {
   const [user, setUser] = useState({ id: 0, email: 'none', nickname: 'none' });
   const { data: allNotes } = useGetUserAllNotesQuery();
   const userData = localStorage.getItem('user');
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -18,12 +20,12 @@ const MyPage = () => {
     <>
       <h1 className={'mb-10 text-5xl font-bold'}>MyPage</h1>
       <div className={'flex space-x-4'}>
-        <div className={'min-w-1/5'}>
+        <div className={'h-fit min-w-1/5 rounded-lg border border-gray-200'}>
           <p>{user?.id}</p>
           <p>{user?.nickname}</p>
           <p>{user?.email}</p>
           <div>
-            <button></button>
+            <button onClick={() => setIsPasswordModalOpen(true)}>Password Change</button>
           </div>
         </div>
         <div className={'w-full'}>
@@ -57,6 +59,7 @@ const MyPage = () => {
             ))}
         </div>
       </div>
+      <ChangePasswordModal open={isPasswordModalOpen} onOpenChange={setIsPasswordModalOpen} />
     </>
   );
 };

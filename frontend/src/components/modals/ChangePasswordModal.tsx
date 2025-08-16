@@ -1,19 +1,22 @@
 import { useForm } from 'react-hook-form';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog.tsx';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog.tsx';
 
-const ChangePasswordModal = () => {
+interface ChangePasswordModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const ChangePasswordModal = ({ open, onOpenChange }: ChangePasswordModalProps) => {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data: any) => {
     // 비밀번호 변경 로직
     console.log(data);
+    onOpenChange(false);
   };
 
   return (
-    <Dialog>
-      <DialogTrigger className="rounded bg-blue-500 px-4 py-2 text-white">
-        비밀번호 변경
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>비밀번호 변경</DialogTitle>
