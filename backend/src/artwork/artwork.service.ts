@@ -63,6 +63,7 @@ export class ArtworkService {
     )}&limit=10&fields=${fields}&has_not_been_viewed_much=false`;
 
     const res = await this.httpService.axiosRef.get(searchUrl);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const artworks = res.data?.data as ArtworkApiData[];
 
     if (!artworks || artworks.length === 0) {
